@@ -1,0 +1,22 @@
+﻿<nav class="navbar @Color.ToString()" role="navigation" aria-label="main navigation">
+    <div class="navbar-brand">
+        <NavLink class="navbar-item" href="" Match="NavLinkMatch.All">
+            @Title
+        </NavLink>
+    </div>
+</nav>
+
+@functions {
+    /// <summary>
+    /// Sets the title in the navbar
+    /// </summary>
+    [Parameter]
+    private string Title { get; set; }
+
+    // TODO: type-safe enum or something
+    /// <summary>
+    /// Sets the class color modifier for the navbar component
+    /// </summary>
+    [Parameter]
+    private NavbarColor Color { get; set; } = NavbarColor.Primary;
+}

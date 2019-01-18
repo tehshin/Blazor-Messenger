@@ -1,15 +1,5 @@
 @inherits BlazorLayoutComponent
 
-<div class="sidebar">
-    <NavMenu />
-</div>
+<Navbar Title="Blazor Messenger" Color="@NavbarColor.Dark"></Navbar>
 
-<div class="main">
-    <div class="top-row px-4">
-        <a href="http://blazor.net" target="_blank" class="ml-md-auto">About</a>
-    </div>
-
-    <div class="content px-4">
-        @Body
-    </div>
-</div>
+@Body
