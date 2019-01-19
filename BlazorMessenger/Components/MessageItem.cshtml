@@ -1,0 +1,16 @@
+﻿<div class="message-item @CssClass">
+    <span class="message-item__timestamp">@Message.Timestamp.ToString(DateFormat)</span>
+    <span class="message-item__user">@Message.Username:</span>
+    <span class="message-item__body">@Message.Body</span>
+</div>
+
+@functions {
+    [Parameter]
+    Message Message { get; set; }
+
+    [Parameter]
+    string CssClass { get; set; }
+
+    [Parameter]
+    string DateFormat { get; set; } = "HH:mm";
+}

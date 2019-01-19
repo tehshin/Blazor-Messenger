@@ -1,0 +1,36 @@
+﻿@inject IUserService UserService
+
+<div class="login">
+    <form class="login__form" onsubmit="@DoLogin">
+        <div class="field">
+            <label class="label">Enter username</label>
+            <div class="control">
+                <input class="input" type="text" placeholder="Username" bind="@Username" />
+            </div>
+        </div>
+        <div class="field">
+            <div class="control">
+                <button type="submit" class="button is-primary">Login</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+@functions {
+    [Parameter]
+    private Action<User> LoggedIn { get; set; }
+
+    private string Username { get; set; }
+
+    private void DoLogin()
+    {
+        if (string.IsNullOrEmpty(Username)) return;
+
+        var user = UserService.Login(Username);
+        if (user != null)
+        {
+            Username = "";
+            LoggedIn?.Invoke(user);
+        }
+    }
+}

@@ -1,0 +1,63 @@
+﻿@using System.Reactive.Linq
+@using static System.Reactive.Linq.Observable;
+
+@implements IDisposable
+
+@inject IMessageService MessageService
+@inject IUserService UserService
+
+<div class="messenger">
+    <div class="messenger__messages">
+        @foreach (var message in Messages)
+        {
+            <MessageItem Message="message" CssClass="@(string.Equals(message.Username, User.Username) ? "me" : null)" />
+        }
+    </div>
+    <form class="messenger__form" onsubmit="@SendMessage">
+        <div class="field has-addons">
+            <div class="control is-expanded">
+                <input class="input" type="text" placeholder="Enter a message here..." bind="@MessageInput" />
+            </div>
+            <div class="control">
+                <button type="submit" class="button is-primary">Send</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+@functions {
+    [Parameter]
+    private User User { get; set; }
+
+    private IDisposable _messageObserver;
+
+    IList<Message> Messages = new List<Message>();
+    IObservableList<User> UserStream;
+
+    string MessageInput;
+
+    protected override void OnInit()
+    {
+        _messageObserver = MessageService.GetMessageStream()
+            .Subscribe(newMessage =>
+            {
+                AddMessage(newMessage);
+                StateHasChanged();
+            });
+    }
+
+    public void Dispose()
+    {
+        _messageObserver.Dispose();
+    }
+
+    private void AddMessage(Message message) => Messages.Add(message);
+
+    private void SendMessage()
+    {
+        if (string.IsNullOrEmpty(MessageInput)) return;
+
+        MessageService.SendMessage(User.Username, MessageInput);
+        MessageInput = "";
+    }
+}
