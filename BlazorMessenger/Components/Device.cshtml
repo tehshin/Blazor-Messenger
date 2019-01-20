@@ -1,26 +1,10 @@
-﻿@if (!IsLoggedIn)
+﻿@inherits BaseDevice
+
+@if (!IsLoggedIn)
 {
-    <Login LoggedIn="@LoggedIn" />
+    <Login LoggedIn="@SetUser" />
 }
 else
 {
-    <Messenger User="@currentUser" />
-}
-
-@functions {
-    private User currentUser;
-
-    private bool IsLoggedIn
-    {
-        get
-        {
-            return currentUser != null;
-        }
-    }
-
-    private void LoggedIn(User user)
-    {
-        currentUser = user;
-        StateHasChanged();
-    }
+    <Messenger User="@CurrentUser" />
 }

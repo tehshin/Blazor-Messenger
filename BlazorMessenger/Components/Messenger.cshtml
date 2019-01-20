@@ -16,10 +16,10 @@
     <form class="messenger__form" onsubmit="@SendMessage">
         <div class="field has-addons">
             <div class="control is-expanded">
-                <input class="input" type="text" placeholder="Enter a message here..." bind="@MessageInput" />
+                <input class="input" type="text" placeholder="Enter a message here..." disabled="@User.IsMuted" bind="@MessageInput" />
             </div>
             <div class="control">
-                <button type="submit" class="button is-primary">Send</button>
+                <button type="submit" class="button is-primary" disabled="@User.IsMuted">Send</button>
             </div>
         </div>
     </form>
@@ -30,9 +30,9 @@
     private User User { get; set; }
 
     private IDisposable _messageObserver;
+    private IDisposable _userUpdatedStream;
 
     IList<Message> Messages = new List<Message>();
-    IObservableList<User> UserStream;
 
     string MessageInput;
 
@@ -44,18 +44,27 @@
                 AddMessage(newMessage);
                 StateHasChanged();
             });
+
+        _userUpdatedStream = UserService.GetUserUpdateStream(User.Username)
+            .Subscribe((user) =>
+            {
+                Console.Out.WriteLine($"User {User.Username} changed mute status to {user.IsMuted}");
+                User.IsMuted = user.IsMuted;
+                StateHasChanged();
+            });
     }
 
     public void Dispose()
     {
         _messageObserver.Dispose();
+        _userUpdatedStream.Dispose();
     }
 
     private void AddMessage(Message message) => Messages.Add(message);
 
     private void SendMessage()
     {
-        if (string.IsNullOrEmpty(MessageInput)) return;
+        if (string.IsNullOrEmpty(MessageInput) || User.IsMuted) return;
 
         MessageService.SendMessage(User.Username, MessageInput);
         MessageInput = "";

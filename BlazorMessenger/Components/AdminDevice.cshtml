@@ -1,0 +1,21 @@
+﻿@inherits BaseDevice
+
+@if (!IsLoggedIn)
+{
+    <Login LoggedIn="@SetUser" />
+}
+else
+{
+    <div class="columns">
+        <div class="column is-two-thirds">
+            <Messenger User="@CurrentUser" />
+        </div>
+        <div class="column">
+            <UserList />
+        </div>
+    </div>
+}
+
+@functions {
+    
+}

@@ -1,0 +1,39 @@
+﻿@inject IUserService UserService
+
+<h3 class="title is-3">Active users</h3>
+<table class="table is-narrow is-bordered is-fullwidth">
+    <tbody>
+        @foreach (var user in _userStream.Items)
+        {
+            <tr>
+                <td class="is-narrow">
+                    @if (user.IsMuted)
+                    {
+                        <button type="button" class="button is-danger" onclick="@(e => UnmuteUser(user.Username))">Unmute</button>
+                    }
+                    else
+                    {
+                        <button type="button" class="button is-success" onclick="@(e => MuteUser(user.Username))">Mute</button>
+                    }
+                </td>
+                <td>
+                    @user.Username
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@functions { 
+    private IObservableList<User> _userStream;
+
+    protected override void OnInit()
+    {
+        _userStream = UserService.GetUsersStream();
+        _userStream.Connect().Subscribe((changes) => StateHasChanged());
+    }
+
+    private void MuteUser(string username) => UserService.MuteUser(username);
+
+    private void UnmuteUser(string username) => UserService.UnmuteUser(username);
+}
